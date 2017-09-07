@@ -12,7 +12,7 @@
     android:paddingRight="20dp"
     android:scrollbars="vertical"
     android:weightSum="1"
-    tools:context="com.example.axway.mbsandroid.LoginActivity">
+    tools:context="com.example.axway.mbaas.LoginActivity">
 
 
   <ImageView

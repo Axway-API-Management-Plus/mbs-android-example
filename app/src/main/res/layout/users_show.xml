@@ -15,6 +15,6 @@
         android:clickable="false"  
         android:focusable="false" 
         android:focusableInTouchMode="false" 
-        android:text="Loading, please wait..." />
+        android:text="Search User" />
 
 </RelativeLayout>
