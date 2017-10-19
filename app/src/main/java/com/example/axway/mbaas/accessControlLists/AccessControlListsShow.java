@@ -22,7 +22,7 @@ import android.widget.EditText;
 
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.apis.DefaultAPI;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.example.axway.mbaas.R;
 import com.example.axway.mbaas.Utils;
 
@@ -273,7 +273,7 @@ public class AccessControlListsShow extends Activity {
         protected void onPostExecute(JSONObject json) {
             if (exceptionThrown == null) {
                 new AlertDialog.Builder(currentActivity)
-                        .setTitle("Success!").setMessage("Shown!")
+                        .setTitle("Success!").setMessage("Updated!")
                         .setPositiveButton(android.R.string.ok, null)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .show();

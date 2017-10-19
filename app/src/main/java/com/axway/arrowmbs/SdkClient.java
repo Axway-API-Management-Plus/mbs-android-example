@@ -10,11 +10,9 @@ import android.util.Log;
 
 import com.axway.arrowmbs.auth.SdkAPIKeyAuth;
 import com.axway.arrowmbs.auth.SdkAuthentication;
-import com.axway.arrowmbs.auth.SdkConstants;
 import com.axway.arrowmbs.auth.SdkCookiesHelper;
 import com.axway.arrowmbs.auth.SdkHttpBasicAuth;
 import com.axway.arrowmbs.auth.SdkIdentityProvider;
-import com.axway.arrowmbs.auth.SdkException;
 import com.axway.arrowmbs.auth.SdkOAuthHelper;
 
 
@@ -32,6 +30,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 import net.openid.appauth.AuthorizationRequest;
 
@@ -41,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
@@ -104,7 +104,6 @@ public class SdkClient implements SdkConstants {
     HashMap<String, SdkIdentityProvider> providers = SdkIdentityProvider.getAllIdentityProviders();
 
     this.authentications.put(NAME_API_AUTH, new SdkAPIKeyAuth("header", "KeyId"));
-    //this.authentications.put(NAME_API_AUTH, new SdkAPIKeyAuth("query", "key"));
 
     if (providers.size() > 0) {
       for (Map.Entry<String, SdkIdentityProvider> entry : providers.entrySet()) {
@@ -404,11 +403,12 @@ public class SdkClient implements SdkConstants {
       return new UrlEncodedContent(formParams);
     } else {
       try {
-        HttpContent content;
+        HttpContent content = new EmptyContent();;
         if (obj != null) {
-          content = new JsonHttpContent(new GsonFactory(), obj);
-        } else {
-          content = new EmptyContent();
+        //JsonHttpContent requires a Map. If you pass an Object then the content will be empty when added to the Request.
+          Type type = new TypeToken<Map<String, String>>(){}.getType();
+          Map<String, String> objMap = JSONUtil.getGson().fromJson(obj.toString(), type);
+          content = new JsonHttpContent(new GsonFactory(), objMap);
         }
         return content;
       } catch (Exception e) {
@@ -422,11 +422,11 @@ public class SdkClient implements SdkConstants {
    * Deserialize the given JSON Result object into Object ( Only JSON is supported for now).
    *
    * @param result @{@link Result} object to be de-serialized
-   * @param t @{@link java.lang.reflect.Type}
+   * @param t @{@link Type}
    * @return @{@link Object}
    * @throws SdkException In case there is an error
    */
-  public Object deserialize(Result result, java.lang.reflect.Type t) throws SdkException {
+  public Object deserialize(Result result, Type t) throws SdkException {
     String json = result.getBody();
     try {
       if (String.class.equals(t)) {
@@ -434,7 +434,7 @@ public class SdkClient implements SdkConstants {
           return json.substring(1, json.length() - 1);
         else
           return json;
-      } else if (isJSONValid(json) && JSONObject.class.equals(t)) {
+      } else if (JSONUtil.isJSONValid(json) && JSONObject.class.equals(t)) {
         return new JSONObject(json);
       } else {
         return JSONUtil.deserialize(json, t);
@@ -448,20 +448,6 @@ public class SdkClient implements SdkConstants {
     }
   }
 
-  public boolean isJSONValid(String test) {
-    try {
-        new JSONObject(test);
-    } catch (JSONException ex) {
-        // edited, to include @Arthur's comment
-        // e.g. in case JSONArray is valid as well...
-        try {
-            new JSONArray(test);
-        } catch (JSONException ex1) {
-            return false;
-        }
-    }
-    return true;
-}
 
   /**
    * Build full URL by concatenating base path, the given sub path and query parameters.
@@ -552,9 +538,7 @@ public class SdkClient implements SdkConstants {
     // Method
     switch (finalMethod) {
       case "GET":
-        break;
       case "DELETE":
-        content = serialize(null,contentType, formParams);
         break;
       case "PATCH":
         transport = new ApacheHttpTransport();
@@ -562,7 +546,6 @@ public class SdkClient implements SdkConstants {
         headers.setContentType(contentType);
         content = serialize(body, contentType, formParams);
         break;
-
       case "POST":
       case "PUT":
         headers.setContentType(contentType);

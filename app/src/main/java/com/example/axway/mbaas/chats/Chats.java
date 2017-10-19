@@ -18,7 +18,7 @@ import android.widget.ListView;
 
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.apis.DefaultAPI;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.example.axway.mbaas.Utils;
 
 import com.example.axway.mbaas.StableArrayAdapter;

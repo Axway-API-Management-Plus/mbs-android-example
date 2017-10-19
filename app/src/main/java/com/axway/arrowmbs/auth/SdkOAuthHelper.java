@@ -11,6 +11,8 @@ import org.json.JSONException;
 
 import com.axway.arrowmbs.SdkUtils;
 import com.axway.arrowmbs.SdkClient;
+import com.axway.arrowmbs.SdkException;
+import com.axway.arrowmbs.SdkConstants;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 
@@ -31,6 +33,8 @@ import net.openid.appauth.AuthorizationRequest;
 import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
 import net.openid.appauth.ClientAuthentication;
+import net.openid.appauth.GrantTypeValues;
+import net.openid.appauth.ResponseTypeValues;
 import net.openid.appauth.TokenRequest;
 import net.openid.appauth.TokenResponse;
 import net.openid.appauth.browser.BrowserWhitelist;

@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import com.axway.arrowmbs.auth.SdkAuthentication;
 import com.axway.arrowmbs.auth.SdkCookiesHelper;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
@@ -74,7 +74,11 @@ public class Result {
       error =
           new SdkException(statusCode, e.getMessage() + ", There is a potential mismatch between the authentication required by the API call and the authentication provided. Before calling the API, confirm you have called one of the accepted authentication type(s): " + Arrays.toString(authNames));
     } else {
-      error = new SdkException(e);
+      if (e instanceof HttpResponseException) {
+        HttpResponseException httpResponseException = (HttpResponseException) e;
+        String message = httpResponseException.getStatusMessage() + "-" + httpResponseException.getContent();
+        error = new SdkException(httpResponseException.getStatusCode(), message);
+      }
     }
   }
 

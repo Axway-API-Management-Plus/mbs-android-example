@@ -2,6 +2,8 @@
 
 package com.axway.arrowmbs.auth;
 
+import com.axway.arrowmbs.SdkException;
+import com.axway.arrowmbs.SdkConstants;
 import static net.openid.appauth.AuthorizationException.TYPE_GENERAL_ERROR;
 
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;

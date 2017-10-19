@@ -5,6 +5,10 @@ package com.axway.arrowmbs.models;
 import com.axway.arrowmbs.JSONUtil;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONObject;
+
+import java.util.List;
+
 public class ErrorResponse {
 
 	@SerializedName("meta")

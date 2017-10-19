@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.apis.DefaultAPI;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 
 import static com.example.axway.mbaas.Utils.handleException;
 import static com.example.axway.mbaas.Utils.handleSDKExcpetion;

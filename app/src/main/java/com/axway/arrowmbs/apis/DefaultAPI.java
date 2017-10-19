@@ -6,11 +6,10 @@ import android.os.Looper;
 
 import com.google.gson.reflect.TypeToken;
 
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.Pair;
 import com.axway.arrowmbs.Result;
-
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import com.axway.arrowmbs.models.*;
+import com.google.gson.reflect.TypeToken;
 
 public class DefaultAPI {
 
@@ -349,6 +349,57 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * Find Facebook Friends
+	 * Find the current user's Facebook Friends who also registered in the same App.
+
+	 * 
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject socialIntegrationsFacebookSearchFriends(Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/social/facebook/search_friends.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Show File Info
 	 * Returns information associated with the file.
 
@@ -389,57 +440,6 @@ referencing the location to access the file. By default, the link expires in fiv
 		queryParams.addAll(client.parameterToPairs("", "file_id", fileId));
 		queryParams.addAll(client.parameterToPairs("", "response_json_depth", responseJsonDepth));
 		queryParams.addAll(client.parameterToPairs("", "expires", expires));
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Find Facebook Friends
-	 * Find the current user's Facebook Friends who also registered in the same App.
-
-	 * 
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject socialIntegrationsFacebookSearchFriends(Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/social/facebook/search_friends.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
 
 
 		
@@ -1817,6 +1817,73 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * Delete a File
+	 * Deletes the file. To delete a file, the current user must be one of the following:
+
+*   The file's owner
+*   A user with write priviledges granted by the file's ACL
+*   An application admin
+
+	 * 
+	 * @param fileId ID of the file to delete.
+	 * @param suId User to delete the File object on behalf of. The user must be the creator of the object.
+
+The current user must be an application admin to delete the File object on
+behalf of another user.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject filesDelete(String fileId, String suId, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'fileId' is set
+		if (fileId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'file_id' when calling filesDelete");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/files/delete.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (fileId != null) formParams.put("file_id", fileId);
+		if (suId != null) formParams.put("su_id", suId);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Custom Query of Geofences
 	 * Perform custom query of geofences with sorting and paginating.
 
@@ -1916,73 +1983,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Delete a File
-	 * Deletes the file. To delete a file, the current user must be one of the following:
-
-*   The file's owner
-*   A user with write priviledges granted by the file's ACL
-*   An application admin
-
-	 * 
-	 * @param fileId ID of the file to delete.
-	 * @param suId User to delete the File object on behalf of. The user must be the creator of the object.
-
-The current user must be an application admin to delete the File object on
-behalf of another user.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject filesDelete(String fileId, String suId, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'fileId' is set
-		if (fileId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'file_id' when calling filesDelete");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/files/delete.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (fileId != null) formParams.put("file_id", fileId);
-		if (suId != null) formParams.put("su_id", suId);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -2444,71 +2444,6 @@ behalf of another user.
 	}
 
 	/**
-	 * Deletes multiple Reviews objects.
-	 * Deletes Reviews objects that match the query constraints provided in the `where` parameter.
-If no `where` parameter is provided, all Reviews objects are deleted. 
-Note that an HTTP 200 code (success)
-is returned if the call completed successfully but the query matched no objects.
-
-For performance reasons, the number of objects that can be deleted in a single batch delete 
-operation is limited to 100,000.
-
-The matched objects are deleted asynchronously in a separate process.              
-
-The reviewed object ({@link #post Post}, {@link #photo Photo}, {@link #user User}, {@link #event Event}, 
-{@link #checkin Checkin}, {@link #place Place}, {@link #custom_object CustomObject}, 
-{@link #status Status}, or {@link #review Review}) of each matched object is not deleted.
-
-You must be an application admin to run this command.
-
-	 * 
-	 * @param where Encoded JSON object that specifies constraint values for Reviews objects to delete.
-If not specified, all Reviews objects are deleted.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject reviewsBatchDelete(String where) throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/reviews/batch_delete.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (where != null) formParams.put("where", where);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Create (Upload) a Photo
 	 * Create a photo using the given `photo` binary attachment. A `collection_name`
 or `collection_id` is optional. The response includes a `processed` flag which
@@ -2613,7 +2548,7 @@ single line (`false`). Default is `false`.
 		final String accept = client.selectHeaderAccept(accepts);
 
 		final String[] contentTypes = {
-			 "multipart/form-data" ,"application/x-www-form-urlencoded"
+			"application/x-www-form-urlencoded", "multipart/form-data"
 		};
 		final String contentType = client.selectHeaderContentType(contentTypes);
 
@@ -2624,39 +2559,39 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Updates a Geofence
-	 * Updates an existing geo-fence object.
+	 * Deletes multiple Reviews objects.
+	 * Deletes Reviews objects that match the query constraints provided in the `where` parameter.
+If no `where` parameter is provided, all Reviews objects are deleted. 
+Note that an HTTP 200 code (success)
+is returned if the call completed successfully but the query matched no objects.
+
+For performance reasons, the number of objects that can be deleted in a single batch delete 
+operation is limited to 100,000.
+
+The matched objects are deleted asynchronously in a separate process.              
+
+The reviewed object ({@link #post Post}, {@link #photo Photo}, {@link #user User}, {@link #event Event}, 
+{@link #checkin Checkin}, {@link #place Place}, {@link #custom_object CustomObject}, 
+{@link #status Status}, or {@link #review Review}) of each matched object is not deleted.
+
+You must be an application admin to run this command.
 
 	 * 
-	 * @param iD ID of the geo-fence object to update.
-	 * @param geoFence JSON object describing the geographic perimeter, data payload, and start and end time
-for the geo-fence object.  Specify the following propertes:
-
-  * `loc` (Hash): **Required.** Geographic perimeter.  See {@link GeoFences#loc}.
-  * `payload` (Hash): JSON-encoded data to retrieve if a device intersects the geographic
-    perimeter.
-  * `start_time` (Date): Datetime to start the geo-fence.
-  * `end_time` (Date): Datetime to end the geo-fence.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
+	 * @param where Encoded JSON object that specifies constraint values for Reviews objects to delete.
+If not specified, all Reviews objects are deleted.
 
 	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public JSONObject geoFencesUpdate(String iD, String geoFence, Boolean prettyJson) throws SdkException {
+	public JSONObject reviewsBatchDelete(String where) throws SdkException {
 		Object bodyParameter = null;
-		// verify the required parameter 'iD' is set
-		if (iD == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'id' when calling geoFencesUpdate");
-		}
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/geo_fences/update.json".replaceAll("\\{format\\}","json");
+		String localVarPath = "/reviews/batch_delete.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
@@ -2664,9 +2599,7 @@ single line (`false`). Default is `false`.
 
 
 
-		if (iD != null) formParams.put("id", iD);
-		if (geoFence != null) formParams.put("geo_fence", geoFence);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		if (where != null) formParams.put("where", where);
 		
 		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
 		// Please set the order to have multipart/form-data as the first entry 
@@ -2680,13 +2613,13 @@ single line (`false`). Default is `false`.
 		final String accept = client.selectHeaderAccept(accepts);
 
 		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
+			
 		};
 		final String contentType = client.selectHeaderContentType(contentTypes);
 
 		String[] authNames = new String[] { "API Key" };
 
-		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -2773,6 +2706,73 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Updates a Geofence
+	 * Updates an existing geo-fence object.
+
+	 * 
+	 * @param iD ID of the geo-fence object to update.
+	 * @param geoFence JSON object describing the geographic perimeter, data payload, and start and end time
+for the geo-fence object.  Specify the following propertes:
+
+  * `loc` (Hash): **Required.** Geographic perimeter.  See {@link GeoFences#loc}.
+  * `payload` (Hash): JSON-encoded data to retrieve if a device intersects the geographic
+    perimeter.
+  * `start_time` (Date): Datetime to start the geo-fence.
+  * `end_time` (Date): Datetime to end the geo-fence.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject geoFencesUpdate(String iD, String geoFence, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'iD' is set
+		if (iD == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'id' when calling geoFencesUpdate");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/geo_fences/update.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (iD != null) formParams.put("id", iD);
+		if (geoFence != null) formParams.put("geo_fence", geoFence);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -3389,52 +3389,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Retrieves the total number of Photo objects.
-	 * Retrieves the total number of Photo objects.
-	 * 
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject photosCount() throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/photos/count.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * 
 	 * Delete the message with the given `id`. The message must be in the current
 user's inbox or sent mail. There is currently no trash folder and deletion is
@@ -3495,6 +3449,52 @@ behalf of another user.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Retrieves the total number of Photo objects.
+	 * Retrieves the total number of Photo objects.
+	 * 
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject photosCount() throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/photos/count.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -3690,7 +3690,7 @@ single line (`false`). Default is `false`.
 		final String accept = client.selectHeaderAccept(accepts);
 
 		final String[] contentTypes = {
-			 "multipart/form-data","application/x-www-form-urlencoded",
+			"application/x-www-form-urlencoded", "multipart/form-data"
 		};
 		final String contentType = client.selectHeaderContentType(contentTypes);
 
@@ -3753,7 +3753,7 @@ single line (`false`). Default is `false`.
 		final String accept = client.selectHeaderAccept(accepts);
 
 		final String[] contentTypes = {
-
+			
 		};
 		final String contentType = client.selectHeaderContentType(contentTypes);
 
@@ -4001,74 +4001,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Show a Checkin
-	 * Returns the contents of the identified checkin.
-	 * 
-	 * @param checkinId ID of the checkin to show.
-	 * @param responseJsonDepth Nested object depth level counts in response json.
-In order to reduce server API calls from an application, the response json may
-include not just the objects that are being queried/searched, but also with
-some important data related to the returning objects such as object's owner or
-referencing objects.
-
-	 * @param showUserLike If set to **true** the Checkin object in the response will include `"current_user_liked: true"`
-if the current user has liked the object. If the user has not liked the object, the
-`current_user_liked` field is not included in the response.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject checkinsShow(String checkinId, Integer responseJsonDepth, Boolean showUserLike, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'checkinId' is set
-		if (checkinId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'checkin_id' when calling checkinsShow");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/checkins/show.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-		queryParams.addAll(client.parameterToPairs("", "checkin_id", checkinId));
-		queryParams.addAll(client.parameterToPairs("", "response_json_depth", responseJsonDepth));
-		queryParams.addAll(client.parameterToPairs("", "show_user_like", showUserLike));
-		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Delete an ACL
 	 * Deletes an ACL object with the given `id` or `name`.
 
@@ -4134,6 +4066,74 @@ behalf of another user.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Show a Checkin
+	 * Returns the contents of the identified checkin.
+	 * 
+	 * @param checkinId ID of the checkin to show.
+	 * @param responseJsonDepth Nested object depth level counts in response json.
+In order to reduce server API calls from an application, the response json may
+include not just the objects that are being queried/searched, but also with
+some important data related to the returning objects such as object's owner or
+referencing objects.
+
+	 * @param showUserLike If set to **true** the Checkin object in the response will include `"current_user_liked: true"`
+if the current user has liked the object. If the user has not liked the object, the
+`current_user_liked` field is not included in the response.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject checkinsShow(String checkinId, Integer responseJsonDepth, Boolean showUserLike, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'checkinId' is set
+		if (checkinId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'checkin_id' when calling checkinsShow");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/checkins/show.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+		queryParams.addAll(client.parameterToPairs("", "checkin_id", checkinId));
+		queryParams.addAll(client.parameterToPairs("", "response_json_depth", responseJsonDepth));
+		queryParams.addAll(client.parameterToPairs("", "show_user_like", showUserLike));
+		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -4520,52 +4520,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Retrieves the total number of User objects.
-	 * Retrieves the total number of User objects.
-	 * 
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject usersCount() throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/users/count.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Creates a user.
 	 * Creates a new user.
 
@@ -4718,49 +4672,26 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Channels Query
-	 * Returns a list of push notification channels the user is subscribed to.
-
-For application admins, if the `user_id` parameter is not specified, returns all channels
-with subscribed users.
-
+	 * Retrieves the total number of User objects.
+	 * Retrieves the total number of User objects.
 	 * 
-	 * @param userId User to retrieve subscribed channels for.
-
-Only application admins can query subscribed channels of a user.
-
-	 * @param page Request page number, default is 1.
-	 * @param perPage Number of results per page, default is 10.
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @param count Set to `true` to return the total number of push channels in the `count` field of the
-`meta` header.  Default is `false`.
-
-Only valid for applications created with ArrowDB 1.1.8 or greater.
-
 	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public JSONObject pushNotificationsChannelsQuery(String userId, Integer page, Integer perPage, Boolean prettyJson, Boolean count) throws SdkException {
+	public JSONObject usersCount() throws SdkException {
 		Object bodyParameter = null;
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/push_notification/channels/query.json".replaceAll("\\{format\\}","json");
+		String localVarPath = "/users/count.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
 		Map<String, Object> formParams = new HashMap<>();
 
-		queryParams.addAll(client.parameterToPairs("", "user_id", userId));
-		queryParams.addAll(client.parameterToPairs("", "page", page));
-		queryParams.addAll(client.parameterToPairs("", "per_page", perPage));
-		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
-		queryParams.addAll(client.parameterToPairs("", "count", count));
 
 
 		
@@ -4856,6 +4787,129 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Channels Query
+	 * Returns a list of push notification channels the user is subscribed to.
+
+For application admins, if the `user_id` parameter is not specified, returns all channels
+with subscribed users.
+
+	 * 
+	 * @param userId User to retrieve subscribed channels for.
+
+Only application admins can query subscribed channels of a user.
+
+	 * @param page Request page number, default is 1.
+	 * @param perPage Number of results per page, default is 10.
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @param count Set to `true` to return the total number of push channels in the `count` field of the
+`meta` header.  Default is `false`.
+
+Only valid for applications created with ArrowDB 1.1.8 or greater.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject pushNotificationsChannelsQuery(String userId, Integer page, Integer perPage, Boolean prettyJson, Boolean count) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/push_notification/channels/query.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+		queryParams.addAll(client.parameterToPairs("", "user_id", userId));
+		queryParams.addAll(client.parameterToPairs("", "page", page));
+		queryParams.addAll(client.parameterToPairs("", "per_page", perPage));
+		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
+		queryParams.addAll(client.parameterToPairs("", "count", count));
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Delete a User or multiple Users
+	 * A user must already be logged in to their account to delete it. Any Friends-related data and push notification subscriptions associated with the user are also deleted.
+	 * 
+	 * @param userIds Comma separated list of User IDs to delete this user on behalf of. The current login user must be an application admin to delete a user on behalf of another user. Another case is that the user can be deleted when the user_ids only contains the id of current user.
+	 * @param suId User ID to delete this user on behalf of. The current login user must be an application admin to delete a user on behalf of another user.
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject usersDelete(String userIds, String suId, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/users/delete.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (userIds != null) formParams.put("user_ids", userIds);
+		if (suId != null) formParams.put("su_id", suId);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -4990,6 +5044,77 @@ of any of the returned messages is `unread`, it will be changed to `read`.
 	}
 
 	/**
+	 * Deletes multiple CustomObject objects.
+	 * Deletes CustomObjects objects that match the query constraints provided in the `where` parameter.
+If no `where` parameter is provided, all CustomObject objects are deleted. 
+Note that an HTTP 200 code (success)
+is returned if the call completed successfully but the query matched no objects.
+
+For performance reasons, the number of objects that can be deleted in a single batch delete 
+operation is limited to 100,000.  
+
+The matched objects are deleted asynchronously in a separate process. 
+
+The {@link #photo primary photos} associated with the matched objects are not deleted. 
+
+You must be an application admin to run this command.
+
+	 * 
+	 * @param where Encoded JSON object that specifies constraint values for CustomObjects objects to delete.
+If not specified, all CustomObjects objects are deleted.
+
+	 * @param classname Type of custom object. Specified as part of the URL path, not in the
+parameters.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject customObjectsBatchDelete(String classname, String where) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'classname' is set
+		if (classname == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'classname' when calling customObjectsBatchDelete");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/objects/{classname}/batch_delete.json".replaceAll("\\{format\\}","json")
+			.replaceAll("\\{classname\\}", client.escapeString(classname.toString()));
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (where != null) formParams.put("where", where);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Create a Photo Collection
 	 * Collections contain one or more photos and/or sub-collections. These can be
 used as photo albums for a user. To create a subcollection,
@@ -5075,77 +5200,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Deletes multiple CustomObject objects.
-	 * Deletes CustomObjects objects that match the query constraints provided in the `where` parameter.
-If no `where` parameter is provided, all CustomObject objects are deleted. 
-Note that an HTTP 200 code (success)
-is returned if the call completed successfully but the query matched no objects.
-
-For performance reasons, the number of objects that can be deleted in a single batch delete 
-operation is limited to 100,000.  
-
-The matched objects are deleted asynchronously in a separate process. 
-
-The {@link #photo primary photos} associated with the matched objects are not deleted. 
-
-You must be an application admin to run this command.
-
-	 * 
-	 * @param where Encoded JSON object that specifies constraint values for CustomObjects objects to delete.
-If not specified, all CustomObjects objects are deleted.
-
-	 * @param classname Type of custom object. Specified as part of the URL path, not in the
-parameters.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject customObjectsBatchDelete(String classname, String where) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'classname' is set
-		if (classname == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'classname' when calling customObjectsBatchDelete");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/objects/{classname}/batch_delete.json".replaceAll("\\{format\\}","json")
-			.replaceAll("\\{classname\\}", client.escapeString(classname.toString()));
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (where != null) formParams.put("where", where);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -6105,66 +6159,6 @@ If you are an application admin, you may omit the device token.
 	}
 
 	/**
-	 *  Update an email template
-	 * 
-	 * 
-	 * @param emailTemplateId Email template id.
-	 * @param name Email template name.
-	 * @param subject Email template subject.
-	 * @param body Email template html body.
-	 * @param plainBody Email template plain text body.
-	 * @return SuccessResponse
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public SuccessResponse emailTemplateEmailTemplatesUpdate(String emailTemplateId, String name, String subject, String body, String plainBody) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'emailTemplateId' is set
-		if (emailTemplateId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'email_template_id' when calling emailTemplateEmailTemplatesUpdate");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/email_templates/update.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (emailTemplateId != null) formParams.put("email_template_id", emailTemplateId);
-		if (name != null) formParams.put("name", name);
-		if (subject != null) formParams.put("subject", subject);
-		if (body != null) formParams.put("body", body);
-		if (plainBody != null) formParams.put("plain_body", plainBody);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
-	}
-
-	/**
 	 * Search Users
 	 * Returns the list of users that have been added to the app, sorted by search
 relevancy.
@@ -6238,6 +6232,66 @@ single line (`false`). Default is `false`.
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 *  Update an email template
+	 * 
+	 * 
+	 * @param emailTemplateId Email template id.
+	 * @param name Email template name.
+	 * @param subject Email template subject.
+	 * @param body Email template html body.
+	 * @param plainBody Email template plain text body.
+	 * @return SuccessResponse
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public SuccessResponse emailTemplateEmailTemplatesUpdate(String emailTemplateId, String name, String subject, String body, String plainBody) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'emailTemplateId' is set
+		if (emailTemplateId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'email_template_id' when calling emailTemplateEmailTemplatesUpdate");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/email_templates/update.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (emailTemplateId != null) formParams.put("email_template_id", emailTemplateId);
+		if (name != null) formParams.put("name", name);
+		if (subject != null) formParams.put("subject", subject);
+		if (body != null) formParams.put("body", body);
+		if (plainBody != null) formParams.put("plain_body", plainBody);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
 	}
 
 	/**
@@ -6407,6 +6461,69 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * Deletes multiple Statuses objects.
+	 * Deletes Statuses objects that match the query constraints provided in the `where` parameter.
+If no `where` parameter is provided, all Statuses objects are deleted. 
+Note that an HTTP 200 code (success)
+is returned if the call completed successfully but the query matched no objects.
+
+For performance reasons, the number of objects that can be deleted in a single batch delete 
+operation is limited to 100,000.
+
+The matched objects are deleted asynchronously in a separate process. The associated 
+{@link #event Event}, {@link #photo Photo}, or {@link #place Place} of each matched object 
+is not deleted.   
+
+You must be an application admin to run this command.
+
+	 * 
+	 * @param where Encoded JSON object that specifies constraint values for Statuses objects to delete.
+If not specified, all Statuses objects are deleted.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject statusesBatchDelete(String where) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/statuses/batch_delete.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (where != null) formParams.put("where", where);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Custom Query Event Occurrences
 	 * Perform custom query of event occurrences with sorting and paginating.
 
@@ -6545,69 +6662,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Deletes multiple Statuses objects.
-	 * Deletes Statuses objects that match the query constraints provided in the `where` parameter.
-If no `where` parameter is provided, all Statuses objects are deleted. 
-Note that an HTTP 200 code (success)
-is returned if the call completed successfully but the query matched no objects.
-
-For performance reasons, the number of objects that can be deleted in a single batch delete 
-operation is limited to 100,000.
-
-The matched objects are deleted asynchronously in a separate process. The associated 
-{@link #event Event}, {@link #photo Photo}, or {@link #place Place} of each matched object 
-is not deleted.   
-
-You must be an application admin to run this command.
-
-	 * 
-	 * @param where Encoded JSON object that specifies constraint values for Statuses objects to delete.
-If not specified, all Statuses objects are deleted.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject statusesBatchDelete(String where) throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/statuses/batch_delete.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (where != null) formParams.put("where", where);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -6998,6 +7052,66 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * 
+	 * Replies to all recipients of the given message `id`. The status of the message
+will be changed to `replied`.
+
+	 * 
+	 * @param messageId ID of the message to reply to.
+	 * @param body Reply message body text.
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject messagesReply(String messageId, String body) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'messageId' is set
+		if (messageId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'message_id' when calling messagesReply");
+		}
+		// verify the required parameter 'body' is set
+		if (body == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'body' when calling messagesReply");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/messages/reply.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (messageId != null) formParams.put("message_id", messageId);
+		if (body != null) formParams.put("body", body);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Custom Query of Friends
 	 * Performs custom query of Friends objects with sorting and paginating of the current
 logged-in user or the specified user.  Only an application admin can perform a query against
@@ -7117,66 +7231,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * 
-	 * Replies to all recipients of the given message `id`. The status of the message
-will be changed to `replied`.
-
-	 * 
-	 * @param messageId ID of the message to reply to.
-	 * @param body Reply message body text.
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject messagesReply(String messageId, String body) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'messageId' is set
-		if (messageId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'message_id' when calling messagesReply");
-		}
-		// verify the required parameter 'body' is set
-		if (body == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'body' when calling messagesReply");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/messages/reply.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (messageId != null) formParams.put("message_id", messageId);
-		if (body != null) formParams.put("body", body);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -7604,6 +7658,124 @@ if the current user has liked the object. If the user has not liked the object, 
 	}
 
 	/**
+	 * Set an apple certificate on an app.
+	 * 
+	 * 
+	 * @param certificateDev Dev certificate file.
+	 * @param devCertPassword Password for dev certificate file.
+	 * @param certificateProd Prod certificate file.
+	 * @param productionCertPassword Password for prod certificate file.
+	 * @return SuccessResponse
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public SuccessResponse appsSetAppleCertificates(File certificateDev, String devCertPassword, File certificateProd, String productionCertPassword) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/apps/set_apple_certificates.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (certificateDev != null) formParams.put("certificate_dev", certificateDev);
+		if (devCertPassword != null) formParams.put("dev_cert_password", devCertPassword);
+		if (certificateProd != null) formParams.put("certificate_prod", certificateProd);
+		if (productionCertPassword != null) formParams.put("production_cert_password", productionCertPassword);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded", "multipart/form-data"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
+	}
+
+	/**
+	 * unsubscribe_token
+	 * Unsubscribes the specified device from a push notification channel.
+If `channel` is not defined, unsubscribes the device from all channels.
+
+	 * 
+	 * @param channel Name of the push notification channel. For multiple channels, comma separate the list of
+channel names.
+
+The name of the push channel cannot start with a hash symbol ('#') or contain a comma (',').
+
+	 * @param deviceToken Android or iOS device token.
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject pushNotificationsUnsubscribeToken(String channel, String deviceToken, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'deviceToken' is set
+		if (deviceToken == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'device_token' when calling pushNotificationsUnsubscribeToken");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/push_notification/unsubscribe_token.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (channel != null) formParams.put("channel", channel);
+		if (deviceToken != null) formParams.put("device_token", deviceToken);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Search Places
 	 * Returns the list of places that have been added to the app, sorted by search
 relevancy.
@@ -7683,124 +7855,6 @@ single line (`false`). Default is `false`.
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * unsubscribe_token
-	 * Unsubscribes the specified device from a push notification channel.
-If `channel` is not defined, unsubscribes the device from all channels.
-
-	 * 
-	 * @param channel Name of the push notification channel. For multiple channels, comma separate the list of
-channel names.
-
-The name of the push channel cannot start with a hash symbol ('#') or contain a comma (',').
-
-	 * @param deviceToken Android or iOS device token.
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject pushNotificationsUnsubscribeToken(String channel, String deviceToken, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'deviceToken' is set
-		if (deviceToken == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'device_token' when calling pushNotificationsUnsubscribeToken");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/push_notification/unsubscribe_token.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (channel != null) formParams.put("channel", channel);
-		if (deviceToken != null) formParams.put("device_token", deviceToken);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Set an apple certificate on an app.
-	 * 
-	 * 
-	 * @param certificateDev Dev certificate file.
-	 * @param devCertPassword Password for dev certificate file.
-	 * @param certificateProd Prod certificate file.
-	 * @param productionCertPassword Password for prod certificate file.
-	 * @return SuccessResponse
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public SuccessResponse appsSetAppleCertificates(File certificateDev, String devCertPassword, File certificateProd, String productionCertPassword) throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/apps/set_apple_certificates.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (certificateDev != null) formParams.put("certificate_dev", certificateDev);
-		if (devCertPassword != null) formParams.put("dev_cert_password", devCertPassword);
-		if (certificateProd != null) formParams.put("certificate_prod", certificateProd);
-		if (productionCertPassword != null) formParams.put("production_cert_password", productionCertPassword);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded", "multipart/form-data"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
 	}
 
 	/**
@@ -8360,6 +8414,52 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * Show an ArrowDB app&#39;s details
+	 * 
+	 * 
+	 * @return SuccessResponse
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public SuccessResponse appsAppsShow() throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/apps/show.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
+	}
+
+	/**
 	 * Retrieves the total number of objects of the specified class.
 	 * Retrieves the total number of objects of the specified class.
 	 * 
@@ -8414,26 +8514,52 @@ parameters.
 	}
 
 	/**
-	 * Show an ArrowDB app&#39;s details
+	 * Show a status
+	 * Returns the identified status message.
+
 	 * 
-	 * 
-	 * @return SuccessResponse
+	 * @param statusId ID of the status to show.
+	 * @param responseJsonDepth Nested object depth level counts in response JSON.
+
+In order to reduce server API calls from an application, the response JSON may
+include not just the objects that are being queried/searched, but also
+some important data related to the returned objects such as object's owner or
+referenced objects.
+
+Default is 1, valid range is 1 to 8.
+
+	 * @param showUserLike If set to **true** the Status object in the response will include `"current_user_liked: true"`
+if the current user has liked the object. If the user has not liked the object, the 
+`current_user_liked` field is not included in the response.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public SuccessResponse appsAppsShow() throws SdkException {
+	public JSONObject statusesShow(String statusId, Integer responseJsonDepth, Boolean showUserLike, Boolean prettyJson) throws SdkException {
 		Object bodyParameter = null;
+		// verify the required parameter 'statusId' is set
+		if (statusId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'status_id' when calling statusesShow");
+		}
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/apps/show.json".replaceAll("\\{format\\}","json");
+		String localVarPath = "/statuses/show.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
 		Map<String, Object> formParams = new HashMap<>();
 
+		queryParams.addAll(client.parameterToPairs("", "status_id", statusId));
+		queryParams.addAll(client.parameterToPairs("", "response_json_depth", responseJsonDepth));
+		queryParams.addAll(client.parameterToPairs("", "show_user_like", showUserLike));
+		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
 
 
 		
@@ -8456,7 +8582,7 @@ parameters.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (SuccessResponse) client.deserialize(result, new TypeToken<SuccessResponse>() {}.getType());
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
 	/**
@@ -8570,54 +8696,46 @@ Default is 1, valid range is 1 to 8.
 	}
 
 	/**
-	 * Show a status
-	 * Returns the identified status message.
+	 * Deletes multiple Users objects.
+	 * Deletes Users objects that match the query constraints provided in the `where` parameter.
+If no `where` parameter is provided, all Users objects are deleted. 
+Note that an HTTP 200 code (success)
+is returned if the call completed successfully but the query matched no objects.
+
+For performance reasons, the number of objects that can be deleted in a single batch delete 
+operation is limited to 100,000.
+
+The matched objects are deleted asynchronously in a separate process.      
+
+The {@link #photo primary photos} associated with the matched objects are 
+not deleted. 
+
+You must be an application admin to run this command.
 
 	 * 
-	 * @param statusId ID of the status to show.
-	 * @param responseJsonDepth Nested object depth level counts in response JSON.
-
-In order to reduce server API calls from an application, the response JSON may
-include not just the objects that are being queried/searched, but also
-some important data related to the returned objects such as object's owner or
-referenced objects.
-
-Default is 1, valid range is 1 to 8.
-
-	 * @param showUserLike If set to **true** the Status object in the response will include `"current_user_liked: true"`
-if the current user has liked the object. If the user has not liked the object, the 
-`current_user_liked` field is not included in the response.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
+	 * @param where Encoded JSON object that specifies constraint values for Users objects to delete.
+If not specified, all Users objects are deleted.
 
 	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public JSONObject statusesShow(String statusId, Integer responseJsonDepth, Boolean showUserLike, Boolean prettyJson) throws SdkException {
+	public JSONObject usersBatchDelete(String where) throws SdkException {
 		Object bodyParameter = null;
-		// verify the required parameter 'statusId' is set
-		if (statusId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'status_id' when calling statusesShow");
-		}
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/statuses/show.json".replaceAll("\\{format\\}","json");
+		String localVarPath = "/users/batch_delete.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
 		Map<String, Object> formParams = new HashMap<>();
 
-		queryParams.addAll(client.parameterToPairs("", "status_id", statusId));
-		queryParams.addAll(client.parameterToPairs("", "response_json_depth", responseJsonDepth));
-		queryParams.addAll(client.parameterToPairs("", "show_user_like", showUserLike));
-		queryParams.addAll(client.parameterToPairs("", "pretty_json", prettyJson));
 
 
+		if (where != null) formParams.put("where", where);
 		
 		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
 		// Please set the order to have multipart/form-data as the first entry 
@@ -8637,7 +8755,7 @@ single line (`false`). Default is `false`.
 
 		String[] authNames = new String[] { "API Key" };
 
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -8709,70 +8827,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Deletes multiple Users objects.
-	 * Deletes Users objects that match the query constraints provided in the `where` parameter.
-If no `where` parameter is provided, all Users objects are deleted. 
-Note that an HTTP 200 code (success)
-is returned if the call completed successfully but the query matched no objects.
-
-For performance reasons, the number of objects that can be deleted in a single batch delete 
-operation is limited to 100,000.
-
-The matched objects are deleted asynchronously in a separate process.      
-
-The {@link #photo primary photos} associated with the matched objects are 
-not deleted. 
-
-You must be an application admin to run this command.
-
-	 * 
-	 * @param where Encoded JSON object that specifies constraint values for Users objects to delete.
-If not specified, all Users objects are deleted.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject usersBatchDelete(String where) throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/users/batch_delete.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (where != null) formParams.put("where", where);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -8938,52 +8992,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Retrieves the total number of email templates.
-	 * Retrieves the total number of email templates.
-	 * 
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject emailsCount() throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/email_templates/count.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Retrieves the total number of ACL objects.
 	 * Retrieves the total number of ACL objects.
 	 * 
@@ -9030,37 +9038,21 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Deletes multiple PhotoCollections objects.
-	 * Deletes PhotoCollections objects that match the query constraints provided in the `where` parameter.
-If no `where` parameter is provided, all PhotoCollections objects are deleted. 
-Note that an HTTP 200 code (success)
-is returned if the call completed successfully but the query matched no objects.
-
-For performance reasons, the number of objects that can be deleted in a single batch delete 
-operation is limited to 100,000.
-
-The matched objects are deleted asynchronously in a separate process.        
-
-The {@link #cover_photo cover photo} associated with any of the matched objects are not not deleted.
-
-You must be an application admin to run this command.
-
+	 * Retrieves the total number of email templates.
+	 * Retrieves the total number of email templates.
 	 * 
-	 * @param where Encoded JSON object that specifies constraint values for PhotoCollections objects to delete.
-If not specified, all PhotoCollections objects are deleted.
-
 	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public JSONObject photoCollectionsBatchDelete(String where) throws SdkException {
+	public JSONObject emailsCount() throws SdkException {
 		Object bodyParameter = null;
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/collections/batch_delete.json".replaceAll("\\{format\\}","json");
+		String localVarPath = "/email_templates/count.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
@@ -9068,7 +9060,6 @@ If not specified, all PhotoCollections objects are deleted.
 
 
 
-		if (where != null) formParams.put("where", where);
 		
 		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
 		// Please set the order to have multipart/form-data as the first entry 
@@ -9088,7 +9079,7 @@ If not specified, all PhotoCollections objects are deleted.
 
 		String[] authNames = new String[] { "API Key" };
 
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -9123,6 +9114,69 @@ If not specified, all Checkins objects are deleted.
 		}
 		// create path and map variables
 		String localVarPath = "/checkins/batch_delete.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (where != null) formParams.put("where", where);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Deletes multiple PhotoCollections objects.
+	 * Deletes PhotoCollections objects that match the query constraints provided in the `where` parameter.
+If no `where` parameter is provided, all PhotoCollections objects are deleted. 
+Note that an HTTP 200 code (success)
+is returned if the call completed successfully but the query matched no objects.
+
+For performance reasons, the number of objects that can be deleted in a single batch delete 
+operation is limited to 100,000.
+
+The matched objects are deleted asynchronously in a separate process.        
+
+The {@link #cover_photo cover photo} associated with any of the matched objects are not not deleted.
+
+You must be an application admin to run this command.
+
+	 * 
+	 * @param where Encoded JSON object that specifies constraint values for PhotoCollections objects to delete.
+If not specified, all PhotoCollections objects are deleted.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject photoCollectionsBatchDelete(String where) throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/collections/batch_delete.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
@@ -10172,6 +10226,81 @@ and deletion is permanent.
 	}
 
 	/**
+	 * Append to a Key-Value
+	 * Add the given `value` to end of the existing one. Not allowed on key-values
+with binary data.
+
+	 * 
+	 * @param name Name (or key) for the key-value pair.
+	 * @param value Value to append to the current value.
+	 * @param accessPrivate Determines whether to update this key-value in the publically readable store
+or in the user's private store.
+
+Default is false (publically readable).
+
+	 * @param suId Update the key-value pair on behalf of the identified user.
+
+Login user must be an admin to update a key-value on behalf of another user.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject keyValuesAppend(String name, String value, Boolean accessPrivate, String suId, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'name' is set
+		if (name == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'name' when calling keyValuesAppend");
+		}
+		// verify the required parameter 'value' is set
+		if (value == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'value' when calling keyValuesAppend");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/keyvalues/append.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (name != null) formParams.put("name", name);
+		if (value != null) formParams.put("value", value);
+		if (accessPrivate != null) formParams.put("access_private", accessPrivate);
+		if (suId != null) formParams.put("su_id", suId);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Send Emails
 	 * Sends an email to a list of email addresses you specify. 
 
@@ -10278,81 +10407,6 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Append to a Key-Value
-	 * Add the given `value` to end of the existing one. Not allowed on key-values
-with binary data.
-
-	 * 
-	 * @param name Name (or key) for the key-value pair.
-	 * @param value Value to append to the current value.
-	 * @param accessPrivate Determines whether to update this key-value in the publically readable store
-or in the user's private store.
-
-Default is false (publically readable).
-
-	 * @param suId Update the key-value pair on behalf of the identified user.
-
-Login user must be an admin to update a key-value on behalf of another user.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject keyValuesAppend(String name, String value, Boolean accessPrivate, String suId, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'name' is set
-		if (name == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'name' when calling keyValuesAppend");
-		}
-		// verify the required parameter 'value' is set
-		if (value == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'value' when calling keyValuesAppend");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/keyvalues/append.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (name != null) formParams.put("name", name);
-		if (value != null) formParams.put("value", value);
-		if (accessPrivate != null) formParams.put("access_private", accessPrivate);
-		if (suId != null) formParams.put("su_id", suId);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -10819,73 +10873,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Delete a Photo Collection
-	 * Delete an empty collection. An error will be returned if a collection contains
-any photos or subcollections.
-
-An application admin can delete any photo collection. The {@link #cover_photo} associated 
-with the collection is not deleted.
-
-	 * 
-	 * @param collectionId ID of the collection to delete.
-	 * @param suId User ID to delete the collection on behalf of. The user must be the creator of the collection.
-
-The current login user must be an application admin to delete a collection on
-behalf of another user.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject photoCollectionsDelete(String collectionId, String suId, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'collectionId' is set
-		if (collectionId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'collection_id' when calling photoCollectionsDelete");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/collections/delete.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (collectionId != null) formParams.put("collection_id", collectionId);
-		if (suId != null) formParams.put("su_id", suId);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * 
 	 * Subscribes a mobile device to a push notifications channel.
 
@@ -10966,33 +10953,39 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Drops a CustomObjects collection.
-	 * Drops a CustomObjects collection of a specified type. The collection is dropped
-asynchronously in a separate process.
+	 * Delete a Photo Collection
+	 * Delete an empty collection. An error will be returned if a collection contains
+any photos or subcollections.
 
-You must be an application admin to run this command.
+An application admin can delete any photo collection. The {@link #cover_photo} associated 
+with the collection is not deleted.
 
 	 * 
-	 * @param classname Type of custom object. Specified as part of the URL path, not in the
-parameters.
+	 * @param collectionId ID of the collection to delete.
+	 * @param suId User ID to delete the collection on behalf of. The user must be the creator of the collection.
+
+The current login user must be an application admin to delete a collection on
+behalf of another user.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
 
 	 * @return JSONObject
 	 * @throws SdkException if fails to make API call
 	 */
 	 @SuppressWarnings("unchecked")
-	public JSONObject customObjectsAdminDropCollection(String classname) throws SdkException {
+	public JSONObject photoCollectionsDelete(String collectionId, String suId, Boolean prettyJson) throws SdkException {
 		Object bodyParameter = null;
-		// verify the required parameter 'classname' is set
-		if (classname == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'classname' when calling customObjectsAdminDropCollection");
+		// verify the required parameter 'collectionId' is set
+		if (collectionId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'collection_id' when calling photoCollectionsDelete");
 		}
 		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
   		 // On UI thread.
 		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
 		}
 		// create path and map variables
-		String localVarPath = "/objects/{classname}/admin_drop_collection.json".replaceAll("\\{format\\}","json")
-			.replaceAll("\\{classname\\}", client.escapeString(classname.toString()));
+		String localVarPath = "/collections/delete.json".replaceAll("\\{format\\}","json");
 		// query params
 		List<Pair> queryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
@@ -11000,6 +10993,9 @@ parameters.
 
 
 
+		if (collectionId != null) formParams.put("collection_id", collectionId);
+		if (suId != null) formParams.put("su_id", suId);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
 		
 		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
 		// Please set the order to have multipart/form-data as the first entry 
@@ -11092,6 +11088,64 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Drops a CustomObjects collection.
+	 * Drops a CustomObjects collection of a specified type. The collection is dropped
+asynchronously in a separate process.
+
+You must be an application admin to run this command.
+
+	 * 
+	 * @param classname Type of custom object. Specified as part of the URL path, not in the
+parameters.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject customObjectsAdminDropCollection(String classname) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'classname' is set
+		if (classname == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'classname' when calling customObjectsAdminDropCollection");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/objects/{classname}/admin_drop_collection.json".replaceAll("\\{format\\}","json")
+			.replaceAll("\\{classname\\}", client.escapeString(classname.toString()));
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -11667,52 +11721,6 @@ new ACL is always owned by the current login user.
 	}
 
 	/**
-	 * Log out a user.
-	 * 
-	 * 
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject usersLogoutUser() throws SdkException {
-		Object bodyParameter = null;
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/users/logout.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Add user(s) to an ACL.
 	 * Adds one or more user(s) to an existing ACL object, identified by its `id` or `name`.
 
@@ -11786,6 +11794,52 @@ controlled by this ACL.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "post", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Log out a user.
+	 * 
+	 * 
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject usersLogoutUser() throws SdkException {
+		Object bodyParameter = null;
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/users/logout.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -11947,71 +12001,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Update the Subscription
-	 * Updates the device's push channel subscription.
-
-	 * 
-	 * @param deviceToken Apple or Android Device Token.
-	 * @param suId User ID to update the subscription on behalf of. You must be logged in as an application administrator
-to update another user's notification subscription.
-
-	 * @param loc The device's current location specified as an array with longitude as the first element, and latitude
-as the second element (`[longitude,latitude]`).
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject pushNotificationsSubscriptionUpdate(String deviceToken, String suId, String loc, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'deviceToken' is set
-		if (deviceToken == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'device_token' when calling pushNotificationsSubscriptionUpdate");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/push_notification/subscription/update.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (deviceToken != null) formParams.put("device_token", deviceToken);
-		if (suId != null) formParams.put("su_id", suId);
-		if (loc != null) formParams.put("loc", loc);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Re-send user email verification.
 	 * If you enabled new user account email verification in your App settings, all
 new users will receive an email containing instructions to activate their
@@ -12089,6 +12078,71 @@ single line (`false`). Default is `false`.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Update the Subscription
+	 * Updates the device's push channel subscription.
+
+	 * 
+	 * @param deviceToken Apple or Android Device Token.
+	 * @param suId User ID to update the subscription on behalf of. You must be logged in as an application administrator
+to update another user's notification subscription.
+
+	 * @param loc The device's current location specified as an array with longitude as the first element, and latitude
+as the second element (`[longitude,latitude]`).
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject pushNotificationsSubscriptionUpdate(String deviceToken, String suId, String loc, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'deviceToken' is set
+		if (deviceToken == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'device_token' when calling pushNotificationsSubscriptionUpdate");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/push_notification/subscription/update.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (deviceToken != null) formParams.put("device_token", deviceToken);
+		if (suId != null) formParams.put("su_id", suId);
+		if (loc != null) formParams.put("loc", loc);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -12273,125 +12327,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Update a Place
-	 * Any of the parameters used to {@link Places#create Create a Place} can
-be used to update it as well. Only the user that created the place can update
-it.
-
-An application admin can update any place object.
-
-	 * 
-	 * @param placeId ID of the place to delete.
-	 * @param name Place name.
-	 * @param address Address.
-	 * @param city City.
-	 * @param state State.
-	 * @param postalCode Postal or ZIP code.
-	 * @param country Country.
-	 * @param latitude Latitude.
-	 * @param longitude Longitude.
-	 * @param website Website URL.
-	 * @param twitter Twitter ID.
-	 * @param phoneNumber Phone number.
-	 * @param photo New photo to attach as the primary photo for this place.
-
-When you use the `photo` parameter to attach a new photo, you can use the
-[custom resize and sync options](#!/guide/photosizes).
-
-	 * @param photoId ID of an existing photo to attach as the primary photo for this place.
-
-	 * @param tags Comma separated list of tags for this place.
-
-	 * @param customFields User defined fields. See [Custom Data Fields](#!/guide/customfields).
-	 * @param aclName Name of an {@link ACLs} to associate with this place object.
-
-An ACL can be specified using `acl_name` or `acl_id`. The two parameters are
-mutually exclusive.
-
-	 * @param aclId ID of an {@link ACLs} to associate with this place object.
-
-An ACL can be specified using `acl_name` or `acl_id`. The two parameters are
-mutually exclusive.
-
-	 * @param userId User ID to assign as the owner of the place object. The current user must have write
-access to the object in order to update the owner.
-
-	 * @param suId User ID to update the Place object on behalf of. The user must be the creator of the object.
-
-The current login user must be an application admin to update a Place object on
-behalf of another user.
-
-	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
-single line (`false`). Default is `false`.
-
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject placesUpdate(String placeId, String name, String address, String city, String state, String postalCode, String country, Double latitude, Double longitude, String website, String twitter, String phoneNumber, File photo, String photoId, String tags, String customFields, String aclName, String aclId, String userId, String suId, Boolean prettyJson) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'placeId' is set
-		if (placeId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'place_id' when calling placesUpdate");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/places/update.json".replaceAll("\\{format\\}","json");
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-
-		if (placeId != null) formParams.put("place_id", placeId);
-		if (name != null) formParams.put("name", name);
-		if (address != null) formParams.put("address", address);
-		if (city != null) formParams.put("city", city);
-		if (state != null) formParams.put("state", state);
-		if (postalCode != null) formParams.put("postal_code", postalCode);
-		if (country != null) formParams.put("country", country);
-		if (latitude != null) formParams.put("latitude", latitude);
-		if (longitude != null) formParams.put("longitude", longitude);
-		if (website != null) formParams.put("website", website);
-		if (twitter != null) formParams.put("twitter", twitter);
-		if (phoneNumber != null) formParams.put("phone_number", phoneNumber);
-		if (photo != null) formParams.put("photo", photo);
-		if (photoId != null) formParams.put("photo_id", photoId);
-		if (tags != null) formParams.put("tags", tags);
-		if (customFields != null) formParams.put("custom_fields", customFields);
-		if (aclName != null) formParams.put("acl_name", aclName);
-		if (aclId != null) formParams.put("acl_id", aclId);
-		if (userId != null) formParams.put("user_id", userId);
-		if (suId != null) formParams.put("su_id", suId);
-		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-				"multipart/form-data", "application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Performs a custom query of ACLs.
 	 * Performs a custom query of ACLs. Regular application users can only query ACLs that they have created. 
 Application admins can query ACLs for an arbitrary user by specifying the `user_id` method parameter.
@@ -12500,6 +12435,125 @@ parameter.
 		String[] authNames = new String[] { "API Key" };
 
 		Result result = client.invokeAPI(localVarPath, "get", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Update a Place
+	 * Any of the parameters used to {@link Places#create Create a Place} can
+be used to update it as well. Only the user that created the place can update
+it.
+
+An application admin can update any place object.
+
+	 * 
+	 * @param placeId ID of the place to delete.
+	 * @param name Place name.
+	 * @param address Address.
+	 * @param city City.
+	 * @param state State.
+	 * @param postalCode Postal or ZIP code.
+	 * @param country Country.
+	 * @param latitude Latitude.
+	 * @param longitude Longitude.
+	 * @param website Website URL.
+	 * @param twitter Twitter ID.
+	 * @param phoneNumber Phone number.
+	 * @param photo New photo to attach as the primary photo for this place.
+
+When you use the `photo` parameter to attach a new photo, you can use the
+[custom resize and sync options](#!/guide/photosizes).
+
+	 * @param photoId ID of an existing photo to attach as the primary photo for this place.
+
+	 * @param tags Comma separated list of tags for this place.
+
+	 * @param customFields User defined fields. See [Custom Data Fields](#!/guide/customfields).
+	 * @param aclName Name of an {@link ACLs} to associate with this place object.
+
+An ACL can be specified using `acl_name` or `acl_id`. The two parameters are
+mutually exclusive.
+
+	 * @param aclId ID of an {@link ACLs} to associate with this place object.
+
+An ACL can be specified using `acl_name` or `acl_id`. The two parameters are
+mutually exclusive.
+
+	 * @param userId User ID to assign as the owner of the place object. The current user must have write
+access to the object in order to update the owner.
+
+	 * @param suId User ID to update the Place object on behalf of. The user must be the creator of the object.
+
+The current login user must be an application admin to update a Place object on
+behalf of another user.
+
+	 * @param prettyJson Determines if the JSON response is formatted for readability (`true`), or displayed on a
+single line (`false`). Default is `false`.
+
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject placesUpdate(String placeId, String name, String address, String city, String state, String postalCode, String country, Double latitude, Double longitude, String website, String twitter, String phoneNumber, File photo, String photoId, String tags, String customFields, String aclName, String aclId, String userId, String suId, Boolean prettyJson) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'placeId' is set
+		if (placeId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'place_id' when calling placesUpdate");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/places/update.json".replaceAll("\\{format\\}","json");
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+
+		if (placeId != null) formParams.put("place_id", placeId);
+		if (name != null) formParams.put("name", name);
+		if (address != null) formParams.put("address", address);
+		if (city != null) formParams.put("city", city);
+		if (state != null) formParams.put("state", state);
+		if (postalCode != null) formParams.put("postal_code", postalCode);
+		if (country != null) formParams.put("country", country);
+		if (latitude != null) formParams.put("latitude", latitude);
+		if (longitude != null) formParams.put("longitude", longitude);
+		if (website != null) formParams.put("website", website);
+		if (twitter != null) formParams.put("twitter", twitter);
+		if (phoneNumber != null) formParams.put("phone_number", phoneNumber);
+		if (photo != null) formParams.put("photo", photo);
+		if (photoId != null) formParams.put("photo_id", photoId);
+		if (tags != null) formParams.put("tags", tags);
+		if (customFields != null) formParams.put("custom_fields", customFields);
+		if (aclName != null) formParams.put("acl_name", aclName);
+		if (aclId != null) formParams.put("acl_id", aclId);
+		if (userId != null) formParams.put("user_id", userId);
+		if (suId != null) formParams.put("su_id", suId);
+		if (prettyJson != null) formParams.put("pretty_json", prettyJson);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded", "multipart/form-data"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
 		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
 	}
 
@@ -12874,128 +12928,6 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
-	 * Set production apps as the package info in the global app db.
-	 * Set production apps as the package info in the global app db.
-	 * 
-	 * @param orgId Set production apps as the package info in the global app db.
-	 * @param packageInfo A hash string which must include 'apiRateMinute' and 'allowProduction', the 'type' of 'packageInfo' can be 'free', 'starter', 'trial', 'professional', or 'enterprise'.
-	 * @param xAuthToken The dashboard access token.
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject orgOrgUpdate(String orgId, String xAuthToken, String packageInfo) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'orgId' is set
-		if (orgId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'org_id' when calling orgOrgUpdate");
-		}
-		// verify the required parameter 'xAuthToken' is set
-		if (xAuthToken == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'x-auth-token' when calling orgOrgUpdate");
-		}
-		// verify the required parameter 'packageInfo' is set
-		if (packageInfo == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'packageInfo' when calling orgOrgUpdate");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/org/{org_id}".replaceAll("\\{format\\}","json")
-			.replaceAll("\\{org_id\\}", client.escapeString(orgId.toString()));
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-		if (xAuthToken != null) headerParams.put("x-auth-token", client.parameterToString(xAuthToken));
-
-		if (packageInfo != null) formParams.put("packageInfo", packageInfo);
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			"application/x-www-form-urlencoded"
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
-	 * Used to disable the production apps according to setting the &#39;status&#39; to 1 in the global_apps collection.
-	 * Used to disable the production apps according to setting the 'status' to 1 in the global_apps collection.
-	 * 
-	 * @param orgId Used to disable the production apps according to setting the 'status' to 1 in the global_apps collection.
-	 * @param xAuthToken The dashboard access token.
-	 * @return JSONObject
-	 * @throws SdkException if fails to make API call
-	 */
-	 @SuppressWarnings("unchecked")
-	public JSONObject orgOrgDelete(String orgId, String xAuthToken) throws SdkException {
-		Object bodyParameter = null;
-		// verify the required parameter 'orgId' is set
-		if (orgId == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'org_id' when calling orgOrgDelete");
-		}
-		// verify the required parameter 'xAuthToken' is set
-		if (xAuthToken == null) {
-			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'x-auth-token' when calling orgOrgDelete");
-		}
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-  		 // On UI thread.
-		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
-		}
-		// create path and map variables
-		String localVarPath = "/org/{org_id}".replaceAll("\\{format\\}","json")
-			.replaceAll("\\{org_id\\}", client.escapeString(orgId.toString()));
-		// query params
-		List<Pair> queryParams = new ArrayList<>();
-		Map<String, String> headerParams = new HashMap<>();
-		Map<String, Object> formParams = new HashMap<>();
-
-
-		if (xAuthToken != null) headerParams.put("x-auth-token", client.parameterToString(xAuthToken));
-
-		
-		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
-		// Please set the order to have multipart/form-data as the first entry 
-		// e.g.   final String[] contentTypes = {
-        //             "multipart/form-data", "application/x-www-form-urlencoded"
-        //       };
-		final String[] accepts = {
-			"application/json"
-		};
-
-		final String accept = client.selectHeaderAccept(accepts);
-
-		final String[] contentTypes = {
-			
-		};
-		final String contentType = client.selectHeaderContentType(contentTypes);
-
-		String[] authNames = new String[] { "API Key" };
-
-		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
-		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
-	}
-
-	/**
 	 * Custom Query Places
 	 * Performs custom query of places with sorting and paginating. Currently you can
 not query or sort data stored inside array or hash in custom fields.
@@ -13246,6 +13178,128 @@ single line (`false`). Default is `false`.
 	}
 
 	/**
+	 * Set production apps as the package info in the global app db.
+	 * Set production apps as the package info in the global app db.
+	 * 
+	 * @param orgId Set production apps as the package info in the global app db.
+	 * @param packageInfo A hash string which must include 'apiRateMinute' and 'allowProduction', the 'type' of 'packageInfo' can be 'free', 'starter', 'trial', 'professional', or 'enterprise'.
+	 * @param xAuthToken The dashboard access token.
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject orgOrgUpdate(String orgId, String xAuthToken, String packageInfo) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'orgId' is set
+		if (orgId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'org_id' when calling orgOrgUpdate");
+		}
+		// verify the required parameter 'xAuthToken' is set
+		if (xAuthToken == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'x-auth-token' when calling orgOrgUpdate");
+		}
+		// verify the required parameter 'packageInfo' is set
+		if (packageInfo == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'packageInfo' when calling orgOrgUpdate");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/org/{org_id}".replaceAll("\\{format\\}","json")
+			.replaceAll("\\{org_id\\}", client.escapeString(orgId.toString()));
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+		if (xAuthToken != null) headerParams.put("x-auth-token", client.parameterToString(xAuthToken));
+
+		if (packageInfo != null) formParams.put("packageInfo", packageInfo);
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			"application/x-www-form-urlencoded"
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "put", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
+	 * Used to disable the production apps according to setting the &#39;status&#39; to 1 in the global_apps collection.
+	 * Used to disable the production apps according to setting the 'status' to 1 in the global_apps collection.
+	 * 
+	 * @param orgId Used to disable the production apps according to setting the 'status' to 1 in the global_apps collection.
+	 * @param xAuthToken The dashboard access token.
+	 * @return JSONObject
+	 * @throws SdkException if fails to make API call
+	 */
+	 @SuppressWarnings("unchecked")
+	public JSONObject orgOrgDelete(String orgId, String xAuthToken) throws SdkException {
+		Object bodyParameter = null;
+		// verify the required parameter 'orgId' is set
+		if (orgId == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'org_id' when calling orgOrgDelete");
+		}
+		// verify the required parameter 'xAuthToken' is set
+		if (xAuthToken == null) {
+			throw new SdkException(SdkException.MISSING_PARAMETER, "Missing the required parameter 'x-auth-token' when calling orgOrgDelete");
+		}
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+  		 // On UI thread.
+		    throw new SdkException(SdkException.ERROR_RUNNING_ON_UI_THREAD, "API Call is running on UI thread. Please call it inside an Async task or a thread");
+		}
+		// create path and map variables
+		String localVarPath = "/org/{org_id}".replaceAll("\\{format\\}","json")
+			.replaceAll("\\{org_id\\}", client.escapeString(orgId.toString()));
+		// query params
+		List<Pair> queryParams = new ArrayList<>();
+		Map<String, String> headerParams = new HashMap<>();
+		Map<String, Object> formParams = new HashMap<>();
+
+
+		if (xAuthToken != null) headerParams.put("x-auth-token", client.parameterToString(xAuthToken));
+
+		
+		//If a file is being uploaded in this API then the contentType should have "multipart/form-data" only or as the first entry in the accepts array.
+		// Please set the order to have multipart/form-data as the first entry 
+		// e.g.   final String[] contentTypes = {
+        //             "multipart/form-data", "application/x-www-form-urlencoded"
+        //       };
+		final String[] accepts = {
+			"application/json"
+		};
+
+		final String accept = client.selectHeaderAccept(accepts);
+
+		final String[] contentTypes = {
+			
+		};
+		final String contentType = client.selectHeaderContentType(contentTypes);
+
+		String[] authNames = new String[] { "API Key" };
+
+		Result result = client.invokeAPI(localVarPath, "delete", queryParams, bodyParameter, headerParams, formParams, accept, contentType, authNames);
+		return (JSONObject) client.deserialize(result, new TypeToken<JSONObject>() {}.getType());
+	}
+
+	/**
 	 * Retrieves the total number of Status objects.
 	 * Retrieves the total number of Status objects.
 	 * 
@@ -13413,7 +13467,7 @@ single line (`false`). Default is `false`.
 		final String accept = client.selectHeaderAccept(accepts);
 
 		final String[] contentTypes = {
-				"multipart/form-data", "application/x-www-form-urlencoded"
+			"application/x-www-form-urlencoded", "multipart/form-data"
 		};
 		final String contentType = client.selectHeaderContentType(contentTypes);
 

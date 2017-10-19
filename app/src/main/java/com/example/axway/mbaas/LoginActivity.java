@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.SdkUtils;
 import com.axway.arrowmbs.auth.SdkConstants;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.axway.arrowmbs.auth.SdkIdentityProvider;
 import com.axway.arrowmbs.auth.SdkOAuthHelper;
 import com.example.axway.mbaas.users.UsersLogin;
@@ -69,7 +69,7 @@ public class LoginActivity extends Activity   {
                         }*/
                         try {
                             SdkClient.getInstance().setAuthenticationType(SdkConstants.NAME_API_AUTH);
-                            SdkClient.getInstance().setApiKey("51145b21-7d4d-4d55-9796-4ea9f9fc36d5");
+                            SdkClient.getInstance().setApiKey("f32bb8da-b786-4c97-b36e-2c74ace48bff");
                            // SdkClient.getInstance().setApiKey("d8da6ac0-bdd3-462d-89f9-1e9dde8b96ab");
 
                             //SdkClient.getInstance().setApiKey("576LLsCHaWAR2gQv9VqB91BLgDfBzMKX");

@@ -3,6 +3,9 @@
 package com.axway.arrowmbs.auth;
 
 
+import android.util.Log;
+
+import com.axway.arrowmbs.SdkException;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 

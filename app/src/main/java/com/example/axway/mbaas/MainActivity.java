@@ -32,7 +32,7 @@ import android.widget.ListView;
 
 import net.openid.appauth.AuthorizationException;
 
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.axway.arrowmbs.auth.SdkOAuthTokenHelper;
 
 

@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch;
 
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.apis.DefaultAPI;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 
 import static com.example.axway.mbaas.Utils.handleErrorInResponse;
 import static com.example.axway.mbaas.Utils.handleException;

@@ -16,20 +16,25 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.axway.arrowmbs.SdkClient;
 import com.axway.arrowmbs.apis.DefaultAPI;
 import com.axway.arrowmbs.auth.SdkCookiesHelper;
-import com.axway.arrowmbs.auth.SdkException;
+import com.axway.arrowmbs.SdkException;
 import com.example.axway.mbaas.R;
+import com.example.axway.mbaas.StableArrayAdapter;
 import com.example.axway.mbaas.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import static com.example.axway.mbaas.Utils.handleErrorInResponse;
@@ -41,6 +46,8 @@ public class UsersRemove extends Activity {
     private static UsersRemove currentActivity;
     private EditText usernameField;
     JSONObject postbody = new JSONObject();
+    String userid = new String();
+    private JSONArray users;
     private Button button1;
 
     @Override
@@ -73,6 +80,7 @@ public class UsersRemove extends Activity {
                 } else {
                     try {
                         postbody.put("username", usernameField.getText().toString());
+                        new userQuery().execute();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -91,14 +99,63 @@ public class UsersRemove extends Activity {
 
     private void submitForm() {
         button1.setVisibility(View.GONE);
-
-
-        new apiTask().execute();
-
-
+            new deleteUser().execute();
     }
 
-    private class apiTask extends AsyncTask<Void, Void, JSONObject> {
+
+    private class userQuery extends AsyncTask<Void, Void, JSONObject> {
+        private ProgressDialog dialog = new ProgressDialog(currentActivity);
+
+        JSONObject successResponse;
+
+        @Override
+        protected void onPreExecute() {
+            {
+                try {
+                    postbody.put("username", usernameField.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... voids) {
+            try {
+                successResponse = new DefaultAPI(SdkClient.getInstance()).usersQuery(null, null, null, null, postbody.toString(), null, null, null, null, null, null);
+            } catch (SdkException e) {
+                Utils.handleSDKExcpetion(e, currentActivity);
+            }
+            return successResponse;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject xml) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
+            try {
+                users = successResponse.getJSONObject("response").getJSONArray("users");
+
+                final ArrayList<String> objectsList = new ArrayList<String>();
+                for (int i = 0; i < users.length(); i++) {
+                    JSONObject user = users.getJSONObject(i);
+                    if (!user.get("id").toString().isEmpty())
+                        userid= user.get("id").toString();
+                }
+                if (objectsList.size() <= 0) {
+                    objectsList.add("No Results!");
+                }
+                // Load listView rows
+            } catch (JSONException e) {
+                Utils.handleException(e, currentActivity);
+            }
+        }
+    }
+    private class deleteUser extends AsyncTask<Void, Void, JSONObject> {
         private ProgressDialog dialog = new ProgressDialog(currentActivity);
 
         JSONObject successResponse;
@@ -106,15 +163,13 @@ public class UsersRemove extends Activity {
 
         @Override
         protected void onPreExecute() {
-            this.dialog.setMessage("Please wait");
-            this.dialog.show();
 
         }
 
         @Override
         protected JSONObject doInBackground(Void... voids) {
             try {
-                successResponse = new DefaultAPI(SdkClient.getInstance()).usersBatchDelete(postbody.toString());
+                successResponse = new DefaultAPI(SdkClient.getInstance()).usersDelete(userid,null,null);
             } catch (SdkException e) {
                 exceptionThrown = e;
             }

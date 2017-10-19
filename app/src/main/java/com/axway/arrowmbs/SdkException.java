@@ -1,6 +1,6 @@
  
 
-package arrowmbs.auth;
+package com.axway.arrowmbs;
 
 import java.util.Map;
 
@@ -13,16 +13,18 @@ public class SdkException extends Exception {
   public static final int AUTH_SERVICE_CREATION_FAILED = 5;
   public static final int AUTH_STATE_READ_FAILED = 6;
   public static final int SECURE_PREFERENCES_NOT_INITIALIZED = 7;
-  public static final int MISSING_PARAMETER = 400;
-  public static final int INTERNET_NOT_AVAILABLE = 100;
-  public static final int AUTH_CONFIG_NOT_AVAILABLE = 101;
+  public static final int MISSING_PARAMETER = 8;
+  public static final int INTERNET_NOT_AVAILABLE = 9;
+  public static final int AUTH_CONFIG_NOT_AVAILABLE = 10;
   public static final int INTERNAL_SERVER_ERROR = 501;
-  public static final int MULTIPART_NOT_SUPPORTED = 401;
-  public static final byte TRANSPORT_OBJECT_CREATION_FAILED = 8;
-  public static final byte AUTH_CONFIG_NOT_SET = 9;
-  public static final byte OAUTHPASSWORD_CREDENTIALS_MISSING = 10;
-  public static final byte OAUTHPASSWORD_CLIENT_CREDENTIALS_MISSING = 11;
-  public static final byte ERROR_RUNNING_ON_UI_THREAD = 12;
+  public static final int MULTIPART_NOT_SUPPORTED = 11;
+  public static final byte TRANSPORT_OBJECT_CREATION_FAILED = 12;
+  public static final byte AUTH_CONFIG_NOT_SET = 13;
+  public static final byte OAUTHPASSWORD_CREDENTIALS_MISSING = 14;
+  public static final byte OAUTHPASSWORD_CLIENT_CREDENTIALS_MISSING = 15;
+  public static final byte ERROR_RUNNING_ON_UI_THREAD = 16;
+  public static final byte COOKIE_NOT_INITIALIZED = 17;
+  public static final byte EXCEPTION = 18;
 
   private int code = 0;
   private String message = null;
@@ -36,6 +38,12 @@ public class SdkException extends Exception {
    */
   public SdkException(Throwable throwable) {
     super(throwable);
+    if(((SdkException) throwable).getCode() > 0){
+        this.code = ((SdkException) throwable).getCode();
+    }else{
+        this.code = EXCEPTION;
+    }
+    this.message = throwable.getMessage();
   }
 
   /**
